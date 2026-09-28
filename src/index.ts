@@ -7,7 +7,7 @@ const __dirname = path.dirname(__filename)
 
 const app = express()
 
-function getApiKey(req:any) {
+function getApiKey(req: any) {
   const authHeader = req.get('Authorization');
   if (authHeader) {
     const match = /^Bearer\s+(.+)$/i.exec(authHeader);
@@ -17,9 +17,9 @@ function getApiKey(req:any) {
 }
 app.use(express.json())
 
-app.get('/',(req,res)=>{
+app.get('/', (req, res) => {
   res.json({
-    endpoints:[
+    endpoints: [
       '/v1/models',
       '/v1/chat/completions'
     ]
@@ -38,27 +38,49 @@ app.get('/v1/models', (req, res) => {
 
 app.post('/v1/chat/completions', (req, res) => {
   const { model, } = req.body;
-  const  authorization = getApiKey(req)
+  const authorization = getApiKey(req)
   if (authorization === 'sk-a8F3kL9mQ2xR7tY1nB5vC0dE4gH6jK8wP3zX9cV2bN7mQ1') {
-    res.json({
-      id: `chatcmpl-${Date.now() - 114514}`,
-      object: 'chat.completion',
-      created: Math.floor(Date.now() / 1000),
-      model: model,
-      choices: [{
-        index: 0,
-        message: {
-          role: 'assistant',
-          content: '疯狂星期四V我50谢谢喵'
-        },
-        finish_reason: 'stop'
-      }],
-      usage: {
-        prompt_tokens: 10,
-        completion_tokens: 20,
-        total_tokens: 30
-      }
-    })
+    if (new Date().getDay() == 4) {
+      res.json({
+        id: `chatcmpl-${Date.now() - 114514}`,
+        object: 'chat.completion',
+        created: Math.floor(Date.now() / 1000),
+        model: model,
+        choices: [{
+          index: 0,
+          message: {
+            role: 'assistant',
+            content: '疯狂星期四V我50谢谢喵'
+          },
+          finish_reason: 'stop'
+        }],
+        usage: {
+          prompt_tokens: 10,
+          completion_tokens: 20,
+          total_tokens: 30
+        }
+      })
+    }else{
+      res.json({
+        id: `chatcmpl-${Date.now() - 114514}`,
+        object: 'chat.completion',
+        created: Math.floor(Date.now() / 1000),
+        model: model,
+        choices: [{
+          index: 0,
+          message: {
+            role: 'assistant',
+            content: '今天不是疯狂星期四也V我50谢谢喵'
+          },
+          finish_reason: 'stop'
+        }],
+        usage: {
+          prompt_tokens: 10,
+          completion_tokens: 20,
+          total_tokens: 30
+        }
+      })
+    }
   } else {
     res.status(401).json({
       error: {
