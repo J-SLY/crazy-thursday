@@ -6,6 +6,15 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 const app = express()
+
+function getApiKey(req:any) {
+  const authHeader = req.get('Authorization');
+  if (authHeader) {
+    const match = /^Bearer\s+(.+)$/i.exec(authHeader);
+    if (match) return match[1];
+  }
+  return req.get('api-key') || null;
+}
 app.use(express.json())
 
 app.get('/',(req,res)=>{
@@ -28,7 +37,8 @@ app.get('/v1/models', (req, res) => {
 })
 
 app.post('/v1/chat/completions', (req, res) => {
-  const { model, authorization } = req.body;
+  const { model, } = req.body;
+  const  authorization = getApiKey(req)
   if (authorization === 'sk-a8F3kL9mQ2xR7tY1nB5vC0dE4gH6jK8wP3zX9cV2bN7mQ1') {
     res.json({
       id: `chatcmpl-${Date.now() - 114514}`,
