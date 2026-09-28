@@ -60,7 +60,7 @@ app.post('/v1/chat/completions', (req, res) => {
       }
     })
   } else {
-    res.json({
+    res.status(401).json({
       error: {
         message: "Incorrect API key provided",
         type: "invalid_request_error",
