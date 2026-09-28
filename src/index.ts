@@ -7,6 +7,16 @@ const __dirname = path.dirname(__filename)
 
 const app = express()
 app.use(express.json())
+
+app.get('/',(req,res)=>{
+  res.json({
+    endpoints:[
+      '/v1/models',
+      '/v1/chat/completions'
+    ]
+  })
+})
+
 app.get('/v1/models', (req, res) => {
   res.json({
     object: 'list',
@@ -18,26 +28,38 @@ app.get('/v1/models', (req, res) => {
 })
 
 app.post('/v1/chat/completions', (req, res) => {
-  const { model } = req.body;
-  res.json({
-    id: `chatcmpl-${Date.now() - 114514}`,
-    object: 'chat.completion',
-    created: Math.floor(Date.now() / 1000),
-    model: model,
-    choices: [{
-      index: 0,
-      message: {
-        role: 'assistant',
-        content: '疯狂星期四V我50谢谢喵'
-      },
-      finish_reason: 'stop'
-    }],
-    usage: {
-      prompt_tokens: 10,
-      completion_tokens: 20,
-      total_tokens: 30
-    }
-  })
+  const { model, authorization } = req.body;
+  if (authorization === 'sk-a8F3kL9mQ2xR7tY1nB5vC0dE4gH6jK8wP3zX9cV2bN7mQ1') {
+    res.json({
+      id: `chatcmpl-${Date.now() - 114514}`,
+      object: 'chat.completion',
+      created: Math.floor(Date.now() / 1000),
+      model: model,
+      choices: [{
+        index: 0,
+        message: {
+          role: 'assistant',
+          content: '疯狂星期四V我50谢谢喵'
+        },
+        finish_reason: 'stop'
+      }],
+      usage: {
+        prompt_tokens: 10,
+        completion_tokens: 20,
+        total_tokens: 30
+      }
+    })
+  } else {
+    res.json({
+      error: {
+        message: "Incorrect API key provided",
+        type: "invalid_request_error",
+        param: null,
+        code: "invalid_api_key"
+      }
+    })
+  }
 })
+
 
 export default app
